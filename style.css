@@ -24,8 +24,8 @@
     --success: var(--teal);
     --gold: #fbbf24;
 
-    --font-heading: 'Playfair Display', serif;
-    --font-body: 'Outfit', sans-serif;
+    --font-heading: 'El Messiri', sans-serif;
+    --font-body: 'Tajawal', sans-serif;
 }
 
 * {
@@ -45,6 +45,7 @@ body {
     overflow: hidden;
     position: relative;
     margin: 0;
+    direction: rtl;
 }
 
 /* Background Image Layer */
@@ -170,7 +171,7 @@ body {
     display: flex;
     gap: 10px;
     align-items: center;
-    margin-left: auto;
+    margin-right: auto;
 }
 
 .inventory-title {
@@ -197,7 +198,7 @@ body {
 
 .toast {
     background: rgba(15, 23, 42, 0.9);
-    border-left: 4px solid var(--accent);
+    border-right: 4px solid var(--accent);
     padding: 12px 20px;
     border-radius: 6px;
     font-size: 0.95rem;
@@ -219,7 +220,7 @@ body {
 
 @keyframes slideIn {
     from {
-        transform: translateX(100%);
+        transform: translateX(-100%);
         opacity: 0;
     }
 
@@ -236,7 +237,7 @@ body {
     }
 
     to {
-        transform: translateX(100%);
+        transform: translateX(-100%);
         opacity: 0;
     }
 }
@@ -416,7 +417,7 @@ body {
     .inventory {
         width: 100%;
         justify-content: center;
-        margin-left: 0;
+        margin-right: 0;
         margin-top: 5px;
     }
 

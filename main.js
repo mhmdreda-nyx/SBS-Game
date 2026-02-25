@@ -4,106 +4,131 @@ let state = {
     sanity: 100,
     gold: 1000,
     timeDelayed: false,
-    inventory: ["Stopped Golden Watch", "Mysterious Medicine"],
+    inventory: ["ساعة ذهبية متوقفة", "زجاجة دواء زرقاء"],
     currentScene: 1
 };
+
+// --- AUDIO SETUP ---
+const bgAudio = document.getElementById("bg-audio");
+const bonusAudio = document.getElementById("bonus-audio");
+let bgMusicStarted = false;
+
+function playBgMusic() {
+    if (!bgMusicStarted && bgAudio) {
+        bgAudio.volume = 0.5;
+        bgAudio.play().catch(e => console.log("Audio play blocked", e));
+        bgMusicStarted = true;
+    }
+}
+
+function playBonusSound() {
+    if (bonusAudio) {
+        bonusAudio.currentTime = 0;
+        bonusAudio.play().catch(e => console.log("Audio play blocked", e));
+    }
+}
+
+// Ensure the music starts upon the first interaction
+document.addEventListener("click", playBgMusic);
 
 // --- SCENE DEFINITIONS ---
 const scenes = {
     1: {
-        title: "The Garden of Oblivion",
-        image: "Images/1.png",
-        text: `You wake up with the overwhelming scent of white roses. You don't remember your name. In your pocket is a note: "Don't trust your memory, trust time." A mysterious gardener smiles and offers you to stay.`,
+        title: "حديقة النسيان",
+        image: "Images/1-cmpr.png",
+        text: `تفتح عينيك بصعوبة على ضوء أبيض ساطع ولاذع. رائحة الورد الأبيض المحيط بك قوية جداً، تخدر عقلك وتجعلك غير قادر على تذكر اسمك. فجأة، تسمع صوت مقص يقطع الأغصان ببرود. البستاني يبتسم ابتسامة خالية من المشاعر ويعرض عليك نسيان ما يؤلمك.`,
         choices: [
             {
-                text: "Search the bushes.",
+                text: "تتجاهله وتتراجع ببطء لتختبئ بين الشجيرات.",
                 action: () => {
-                    updateInventory("add", "Rusty Key");
-                    updateInventory("add", "Torn Map");
-                    updateSanity(-20, "You found a hidden corpse... horrifying.");
-                    showToast("Found Rusty Key and Torn Map!", "success");
+                    updateInventory("add", "مفتاح صدئ");
+                    updateInventory("add", "خريطة ممزقة");
+                    updateSanity(-20, "تتعثر في جثة مخبأة... مشهد مرعب.");
+                    showToast("حصلت على مفتاح صدئ وخريطة ممزقة!", "success");
                     goToScene(2);
                 }
             },
             {
-                text: "Ask him who you are.",
+                text: "تقترب منه بشجاعة وتسأله: 'من أنا؟ وما هذا المكان؟'",
                 action: () => {
-                    updateInventory("add", "Golden Apple");
-                    showToast("He gives you a Golden Apple.", "success");
+                    updateInventory("add", "تفاحة ذهبية");
+                    showToast("أعطاك البستاني التفاحة الذهبية.", "success");
                     goToScene(2);
                 }
             },
             {
-                text: "Sneak out silently.",
+                text: "تومئ برأسك كأنك موافق لتهدئته، وتتسلل بصمت وتركض.",
                 action: () => {
-                    showToast("You sneak out safely.", "success");
+                    showToast("نجحت في التسلل للخارج بسلام.", "success");
                     goToScene(2);
                 }
             }
         ]
     },
     2: {
-        title: "The Forest of Whispers",
-        image: "Images/2.png",
-        text: `You find a torn photo of a little girl and suddenly remember: she is your sick daughter! You enter a dark forest where the trees whisper your name in her voice.`,
+        title: "غابة الهمسات",
+        image: "Images/2-cmpr.png",
+        text: `تسقط منك نصف صورة ممزقة.. إنها ابنتك المريضة في أمس الحاجة إليك! الشجر يهمس بأصوات مقلقة وتتخللها أصوات بكاء ابنتك تطلب النجدة. الطريقة تنقسم أمامك.`,
         choices: [
             {
-                text: "Follow the sound.",
+                text: "قلبك لا يتحمل صوتها، تندفع فوراً متتبعاً البكاء.",
                 action: () => {
-                    updateGold(-200, "It was a trap!");
-                    updateSanity(-20, "The whispers mess with your mind.");
+                    updateGold(-300, "وقعت في فخ لصوص! فقدت 300 عملة.");
+                    updateSanity(-20, "الهمسات تتلاعب بعقلك.");
                     goToScene(3);
                 }
             },
             {
-                text: "Cover your ears and walk straight.",
+                text: "لا تثق بذاكرتك. تسد أذنيك وتكمل سيرك متجاهلاً الأصوات.",
                 action: () => {
-                    showToast("You passed safely.", "success");
+                    showToast("نجحت في العبور بسلام متجاوزاً الأوهام.", "success");
                     goToScene(3);
                 }
             },
             {
-                text: "Help an injured man.",
+                text: "تلمح رجلاً ملقى على الأرض يطلب النجدة، تقترب لمساعدته.",
                 action: () => {
-                    updateHealth(-20, "It's an ambush!");
-                    updateInventory("add", "Protective Charm");
-                    showToast("You fought them off and found a Protective Charm.", "success");
+                    updateHealth(-20, "إنه فخ! دخلت في عراك.");
+                    updateInventory("add", "تعويذة سحرية");
+                    showToast("خرجت من العراك بتعويذة سحرية.", "success");
                     goToScene(3);
                 }
             }
         ]
     },
     3: {
-        title: "The Market of Illusions",
-        image: "Images/3.png",
-        text: `You reach a bizarre market next to a green river. The faceless locals recoil in horror when you show them your daughter's photo.`,
+        title: "سوق الأوهام",
+        image: "Images/3-cmpr.png",
+        text: `سوق عشوائي يمتد على ضفة نهر أخضر داكن. بمجرد رؤية الناس لصورة ابنتك، يتراجعون برعب وتصبح منبوذاً. التكتكة في رأسك تتسارع.`,
         choices: [
             {
-                text: "Buy a weapon from a shady merchant. (-800 Gold)",
+                text: "تشتري سيفاً حاداً من تاجر أسلحة. (-800 عملة)",
                 condition: () => state.gold >= 800,
                 action: () => {
                     updateGold(-800);
-                    updateInventory("add", "Sharp Sword");
+                    updateInventory("add", "سيف حاد");
+                    showToast("أصبحت مسلحاً بسيف حاد.", "success");
                     goToScene(4);
                 }
             },
             {
-                text: "Pay the fortune teller. (-200 Gold)",
+                text: "تدخل خيمة عرافة عجوز. (-200 عملة)",
                 condition: () => state.gold >= 200,
                 action: () => {
                     updateGold(-200);
-                    updateInventory("add", "Mirror of Truth");
+                    updateInventory("add", "مرآة الحقيقة");
+                    showToast("العيون تكذب.. مرآة الحقيقة ستساعدك.", "success");
                     goToScene(4);
                 }
             },
             {
-                text: "Accept a stranger's free guidance.",
+                text: "تتقرب من شخص ودود ليرشدك مجاناً.",
                 action: () => {
-                    if (state.inventory.includes("Rusty Key")) {
-                        updateInventory("remove", "Rusty Key");
-                        showToast("The stranger robbed you of your Rusty Key.", "danger");
+                    if (state.inventory.includes("مفتاح صدئ")) {
+                        updateInventory("remove", "مفتاح صدئ");
+                        showToast("غافلك الشخص وسرق المفتاح الصدئ!", "danger");
                     } else {
-                        updateGold(-100, "The stranger robbed you.");
+                        updateGold(-100, "تعرضت للسرقة! فقدت 100 عملة.");
                     }
                     goToScene(4);
                 }
@@ -111,30 +136,30 @@ const scenes = {
         ]
     },
     4: {
-        title: "The Windmill of Time",
-        image: "Images/4.png",
-        text: `A massive mechanical windmill blocks the path. The iron door is locked by gears missing a watch-shaped piece.`,
+        title: "طاحونة الوقت",
+        image: "Images/4-cmpr.png",
+        text: `طاحونة هواء عملاقة مسدودة. عند الباب، تجد آلية معقدة بها تجويف على شكل ساعة جيب. صوت التكتكة في رأسك يتعالى كأن الآلة تطلب نبضاً لتعمل.`,
         choices: [
             {
-                text: "Insert the Stopped Golden Watch.",
-                condition: () => state.inventory.includes("Stopped Golden Watch"),
+                text: "تضع الساعة الذهبية المتوقفة في التجويف.",
+                condition: () => state.inventory.includes("ساعة ذهبية متوقفة"),
                 action: () => {
-                    updateInventory("remove", "Stopped Golden Watch");
-                    updateInventory("add", "Silver Gear");
-                    showToast("The door opens smoothly.", "success");
+                    updateInventory("remove", "ساعة ذهبية متوقفة");
+                    updateInventory("add", "ترس فضي");
+                    showToast("دارت العقارب وانفتح الباب وسقط لك ترس فضي.", "success");
                     goToScene(5);
                 }
             },
             {
-                text: "Smash the lock with the Sharp Sword.",
-                condition: () => state.inventory.includes("Sharp Sword"),
+                text: "تسحب السيف وتضرب القفل بكل قوتك.",
+                condition: () => state.inventory.includes("سيف حاد"),
                 action: () => {
-                    updateHealth(-30, "The door breaks but debris falls on you.");
+                    updateHealth(-30, "تحطم الباب، لكن سقطت عليك أجزاء من السقف وتنزف.");
                     goToScene(5);
                 }
             },
             {
-                text: "Search for another way around.",
+                text: "تتسلق الصخور الجانبية للالتفاف حولها.",
                 action: () => {
                     updateTimeDelay();
                     goToScene(5);
@@ -143,173 +168,174 @@ const scenes = {
         ]
     },
     5: {
-        title: "The Mercury Bridge",
-        image: "Images/5.png",
-        text: `A stone bridge crosses a river of liquid mercury. An old crone demands proof of insight, asking: "I build bridges of silver. I have no eyes but see everything. What am I?"`,
+        title: "جسر الزئبق",
+        image: "Images/5-cmpr.png",
+        text: `جسر زئبقي تقف عليه عجوز بقلنسوة ممزقة. تسألك: "أبني جسوراً من الفضة وتيجاناً من الذهب، ليس لي عيون وأرى كل شيء، أخبرك بمصيرك دون لسان.. من أنا؟"`,
         choices: [
             {
-                text: "Show her the Mirror of Truth.",
-                condition: () => state.inventory.includes("Mirror of Truth"),
+                text: "توجه مرآة الحقيقة نحوها بصمت.",
+                condition: () => state.inventory.includes("مرآة الحقيقة"),
                 action: () => {
-                    updateHealth(40, "She steps aside in fear and gives you a Healing Potion.");
+                    updateHealth(40, "تراجعت العجوز رعباً ورمت لك علاجاً سحرياً.");
                     goToScene(6);
                 }
             },
             {
-                text: "Answer: 'A Mirror'",
+                text: "الجواب: 'المرآة!'",
                 action: () => {
-                    showToast("She smiles and lets you pass.", "success");
+                    showToast("تراجعت وسمحت لك بالمرور بسلام.", "success");
                     goToScene(6);
                 }
             },
             {
-                text: "Threaten her.",
+                text: "تهددها بالسيف.",
+                condition: () => state.inventory.includes("سيف حاد"),
                 action: () => {
-                    updateHealth(-40, "She turns into a monster! The bridge breaks.");
+                    updateHealth(-40, "تحولت لوحش وضربت الجسر! قفزت وفقدت صحتك.");
                     goToScene(6);
                 }
             }
         ]
     },
     6: {
-        title: "The Fields of Glass",
-        image: "Images/6.png",
-        text: `A beautiful green field, but every blade of grass is made of razor-sharp glass.`,
+        title: "حقول الزجاج",
+        image: "Images/6-cmpr.png",
+        text: `تنقشع الأبخرة لتكشف عن حقل من العشب، لكن كل ورقة عبارة عن زجاج حاد. يلوح البرج في الأفق العاجي منتظراً إياك.`,
         choices: [
             {
-                text: "Walk very slowly.",
+                text: "تمشي ببطء شديد، حاسباً كل خطوة.",
                 action: () => {
-                    updateHealth(20, "You found a Rare Herb!");
+                    updateHealth(20, "خطوت بحذر ووجدت عشبة طبية تعالجت بها.");
                     updateTimeDelay();
                     goToScene(7);
                 }
             },
             {
-                text: "Run through it.",
+                text: "تغمض عينيك وتركض بأقصى سرعة!",
                 action: () => {
-                    updateHealth(-30, "You got cut crossing the field.");
+                    updateHealth(-30, "وصلت أسرع لكن الزجاج مزقك وتنزف بشدة.");
                     goToScene(7);
                 }
             },
             {
-                text: "Push an old cart ahead of you.",
+                text: "تدفع عربة خشبية محطمة لتمهد الطريق.",
                 action: () => {
-                    showToast("Safe and fast, but the noise alerts the next danger.", "warning");
+                    showToast("عبرت بأمان، لكن الصوت العالي نبّه خطراً قادماً.", "warning");
                     goToScene(7);
                 }
             }
         ]
     },
     7: {
-        title: "The Forest Guardian",
-        image: "Images/7.png",
-        text: `A colossal, glowing-eyed tiger blocks the exit of the forest.`,
+        title: "حارس الغابة",
+        image: "Images/7-cmpr.png",
+        text: `نمر سحري عملاق، عيناه تشعان بلون أزرق يخترق الروح. اهتزاز الأرض يرجف عضلة قلبك. إنه يسد طريقك الأخير.`,
         choices: [
             {
-                text: "Fight with the Sharp Sword.",
-                condition: () => state.inventory.includes("Sharp Sword"),
+                text: "تستل سيفك وتندفع للمعركة.",
+                condition: () => state.inventory.includes("سيف حاد"),
                 action: () => {
-                    updateHealth(-40, "You win, but sustain heavy injuries.");
+                    updateHealth(-40, "قتلت الوحش بصعوبة بالغة وواصلت طريقك مجروحاً.");
                     goToScene(8);
                 }
             },
             {
-                text: "Throw the Golden Apple.",
-                condition: () => state.inventory.includes("Golden Apple"),
+                text: "تخرج التفاحة الذهبية وتدحرجها نحوه.",
+                condition: () => state.inventory.includes("تفاحة ذهبية"),
                 action: () => {
-                    showToast("The magic apple puts the tiger to sleep.", "success");
+                    showToast("التهم الوحش التفاحة وسقط في سبات سحري عميق.", "success");
                     goToScene(8);
                 }
             },
             {
-                text: "Distract it with the ticking Stopped Golden Watch.",
-                condition: () => state.inventory.includes("Stopped Golden Watch"),
+                text: "تلقي بالساعة المتوقفة بعيداً.",
+                condition: () => state.inventory.includes("ساعة ذهبية متوقفة"),
                 action: () => {
-                    updateInventory("remove", "Stopped Golden Watch");
-                    showToast("Tiger chases the sound. You pass safely.", "success");
+                    updateInventory("remove", "ساعة ذهبية متوقفة");
+                    showToast("انجذب الوحش لصوت التكتكة ونجوت! فقدت ساعتك.", "success");
                     goToScene(8);
                 }
             },
             {
-                text: "Run blindly.",
+                text: "تركض بشكل أعمى محاولاً الهرب.",
                 action: () => {
-                    gameOver("The tiger catches you. You have been slain.");
+                    gameOver("لم تستطع الهرب. أمسك بك النمر ممزقاً جسدك.");
                 }
             }
         ]
     },
     8: {
-        title: "The Maze of Mirrors",
-        image: "Images/8.png",
-        text: `A labyrinth of giant mirrors showing you alternate, perfect lives where your daughter is never sick. The illusions urge you to stay and rest.`,
+        title: "متاهة المرايا",
+        image: "Images/8-cmpr.png",
+        text: `جدران هائلة من المرايا تظهر لك انعكاسات مريحة وتهمس: "الدواء لن ينقذها. استرح وعش في الخيال الجميل." عقلك ينهار تحت وطأة الوهم.`,
         choices: [
             {
-                text: "Use the Mirror of Truth.",
-                condition: () => state.inventory.includes("Mirror of Truth"),
+                text: "ترفع مرآة الحقيقة لكسر السحر.",
+                condition: () => state.inventory.includes("مرآة الحقيقة"),
                 action: () => {
-                    showToast("The illusions shatter instantly, revealing the exit.", "success");
+                    showToast("ضرب الشعاع المرايا الكاذبة وظهر لك الطريق الحقيقي.", "success");
                     goToScene(9);
                 }
             },
             {
-                text: "Smash the mirrors.",
+                text: "تحطم المرايا بوحشية بأسلحتك.",
                 action: () => {
-                    updateSanity(-40, "The fractured reflections break your mind.");
+                    updateSanity(-40, "تطايرت الشظايا وجرحت عقلك... تخرج مهلوساً.");
                     goToScene(9);
                 }
             },
             {
-                text: "Surrender and rest.",
+                text: "تصّدق الانعكاس وتبقى في الوهم المريح.",
                 action: () => {
-                    gameOver("You fall asleep forever in the illusions.");
+                    gameOver("ابتلعك الزجاج وتحولت لمجرد انعكاس محبوس للأبد.");
                 }
             }
         ]
     },
     9: {
-        title: "The Mercenary Camp",
-        image: "Images/9.png",
-        text: `You reach the ivory tower where your daughter is kept, but a camp of heavily armed mercenaries guards the entrance.`,
+        title: "معسكر المرتزقة",
+        image: "Images/9-cmpr.png",
+        text: `الأرض الأخيرة. معسكر محصن تحرسه شخصيات بدروع سوداء، عيونهم مجوفة ومشارطهم ضخمة. يضمنون ألا يوقظ أحد ابنتك النائمة في البرج.`,
         choices: [
             {
-                text: "Bribe them with 500 Gold.",
+                text: "تلقي بـ 500 عملة عند قدمي قائدهم.",
                 condition: () => state.gold >= 500,
                 action: () => {
                     updateGold(-500);
-                    showToast("They take the money and let you in.", "success");
+                    showToast("يضحك ويشير لرجاله بفتح البوابة لك.", "success");
                     goToScene(10);
                 }
             },
             {
-                text: "Sneak through the back.",
-                condition: () => state.inventory.includes("Rusty Key") && state.inventory.includes("Torn Map"),
+                text: "تستخدم الخريطة الممزقة والمفتاح للتسلل بالخفاء.",
+                condition: () => state.inventory.includes("مفتاح صدئ") && state.inventory.includes("خريطة ممزقة"),
                 action: () => {
-                    showToast("You enter undetected via the back routes.", "success");
+                    showToast("فتحت الباب السري وتجاوزت المعسكر غير مكتشف.", "success");
                     goToScene(10);
                 }
             },
             {
-                text: "Fight your way in.",
+                text: "تندفع في معركة انتحارية لبلوغ الباب.",
                 action: () => {
                     if (state.health > 50) {
                         state.health = 10;
                         updateUI();
-                        showToast("Epic battle! You survived, but barely.", "warning");
+                        showToast("اقتحمت البوابة وسقطت بالداخل تنزف بشدة!", "warning");
                         goToScene(10);
                     } else {
-                        gameOver("You were too weak to defeat the mercenaries.");
+                        gameOver("لم تملك القوة كافية للمعركة. سقطت مقتولاً أمام البوابة.");
                     }
                 }
             }
         ]
     },
     10: {
-        title: "The Ivory Tower",
-        image: "Images/10.png",
-        text: `You enter the top room. Your pale daughter lies on the bed. You hold the mysterious medicine from your pocket.`,
+        title: "البرج العاجي",
+        image: "Images/10-cmpr.png",
+        text: `دخلت الغرفة بصمت. السرير ترقد عليه ابنتك بسلام شاحب. تخرج زجاجة الدواء الزرقاء ويدك ترتجف...`,
         choices: [
             {
-                text: "Approach the bed...",
+                text: "تقترب من السرير لإنقاذها...",
                 action: () => evaluateEndings()
             }
         ]
@@ -333,7 +359,7 @@ function updateUI() {
     animateValue(healthEl, state.health);
     animateValue(sanityEl, state.sanity);
     animateValue(goldEl, state.gold);
-    inventoryListEl.textContent = state.inventory.length ? state.inventory.join(" • ") : "Empty";
+    inventoryListEl.textContent = state.inventory.length ? state.inventory.join(" • ") : "فارغ";
 }
 
 function animateValue(element, newValue) {
@@ -347,11 +373,15 @@ function animateValue(element, newValue) {
 function updateHealth(amount, msgText = null) {
     state.health += amount;
     if (state.health > 100) state.health = 100;
+
+    // Check bonus conditions before gameover logic
+    if (amount !== 0) playBonusSound();
+
     if (amount < 0 && msgText) showToast(msgText, "danger");
     else if (amount > 0 && msgText) showToast(msgText, "success");
 
     if (state.health <= 0) {
-        gameOver("You have succumbed to your injuries.");
+        gameOver("استسلم جسدك لجراحه الكثيرة، وسقطت مقتولاً.");
         return;
     }
     updateUI();
@@ -360,10 +390,13 @@ function updateHealth(amount, msgText = null) {
 function updateSanity(amount, msgText = null) {
     state.sanity += amount;
     if (state.sanity > 100) state.sanity = 100;
+
+    if (amount !== 0) playBonusSound();
+
     if (amount < 0 && msgText) showToast(msgText, "danger");
 
     if (state.sanity <= 0) {
-        gameOver("Your mind has shattered entirely.");
+        gameOver("تحطم عقلك تماماً وفقدت صوابك للأبد.");
         return;
     }
     updateUI();
@@ -372,23 +405,33 @@ function updateSanity(amount, msgText = null) {
 function updateGold(amount, msgText = null) {
     state.gold += amount;
     if (state.gold < 0) state.gold = 0;
+
+    if (amount !== 0) playBonusSound();
+
     if (amount < 0 && msgText) showToast(msgText, "warning");
     updateUI();
 }
 
 function updateInventory(action, item) {
+    let changed = false;
     if (action === "add" && !state.inventory.includes(item)) {
         state.inventory.push(item);
+        changed = true;
     } else if (action === "remove") {
         const index = state.inventory.indexOf(item);
-        if (index > -1) state.inventory.splice(index, 1);
+        if (index > -1) {
+            state.inventory.splice(index, 1);
+            changed = true;
+        }
     }
+
+    if (changed) playBonusSound();
     updateUI();
 }
 
 function updateTimeDelay() {
     state.timeDelayed = true;
-    showToast("This action took too much time...", "warning");
+    showToast("استغرق هذا الفعل وقتاً طويلاً...", "warning");
 }
 
 function showToast(message, type = "info") {
@@ -423,7 +466,10 @@ function renderScene() {
                 const btn = document.createElement("button");
                 btn.className = "choice-btn";
                 btn.innerHTML = choice.text;
-                btn.onclick = choice.action;
+                btn.onclick = () => {
+                    playBgMusic(); // Safety to hit auto-play rules if first click is a choice
+                    choice.action();
+                };
                 choicesContainer.appendChild(btn);
             }
         });
@@ -476,38 +522,38 @@ function evaluateEndings() {
     let endTitle = "";
     let endText = "";
 
-    if (state.timeDelayed === true && state.health <= 20) {
-        // Ending 1: Tragic Hero
-        endTitle = "Tragic Hero";
-        endText = "You arrive too late. Your injuries overwhelm you, and you collapse beside her bed. Game Over.";
-    } else if (state.inventory.includes("Mirror of Truth") || state.inventory.includes("Torn Map")) {
-        // Ending 2: Illusion Breaker
-        endTitle = "Illusion Breaker";
-        endText = "You examine the medicine closely and realize it's poison given by the gardener to wipe your memories! You throw it away, grab your daughter, and escape the tower, waking up together in the real world. You Win!";
+    if (state.timeDelayed === true) {
+        // Ending 1: Tragic Hero (توقف النبض)
+        endTitle = "توقف النبض";
+        endText = "تفتح زجاجة الدواء، لكن قبل أن تضع القطرة الأولى، تتوقف أنفاسها. يرتفع صوت تكتكة الساعة ليصبح صفيراً متصلاً يمزق الآذان... لقد خسرت السباق ضد الزمن.";
+    } else if (state.inventory.includes("مرآة الحقيقة") && state.sanity > 0) {
+        // Ending 3: Illusion Breaker (النهاية الحقيقية)
+        endTitle = "كاسر الزجاج (النهاية الحقيقية)";
+        endText = "تنظر لانعكاس الزجاجة في المرآة وتدرك الصاعقة: الدواء ما هو إلا سم للاستسلام! تحطم الزجاجة وتحمل ابنتك قافزاً من نافذة البرج. تسقط في الظلام وتفتح عينيك.. لتجد نفسك في غرفة العناية المركزة الحقيقية.. الطبيب المبتسم يخبرها: لقد تخطت الخطر. انتصرت.";
     } else {
-        // Ending 3: Blind Survivor
-        endTitle = "Blind Survivor";
-        endText = "You give her the medicine. She opens her eyes and smiles. You live in this strange land forever, always feeling that something isn't quite right. You Win... sort of.";
+        // Ending 2: Blind Survivor (السبات الجميل)
+        endTitle = "السبات الجميل";
+        endText = "تسكب الدواء ببطء. ابنتك تسعل وتفتح عينيها. تعيشان في حديقة الورد بسعادة.. لكن في سكون الليل، تستمر بسماع صوت صفير أجهزة طبية، متسائلاً إن كنتما تعيشان وهماً مريحاً هرباً من الحقيقة. (نهاية وهمية)";
     }
 
-    sceneTitle.textContent = "Ending: " + endTitle;
+    sceneTitle.textContent = "النهاية: " + endTitle;
     storyText.textContent = endText;
 
     let restartBtn = document.createElement("button");
     restartBtn.className = "choice-btn";
-    restartBtn.textContent = "Restart Game";
+    restartBtn.textContent = "إعادة اللعب";
     restartBtn.onclick = () => location.reload();
     choicesContainer.appendChild(restartBtn);
 }
 
 function gameOver(message) {
     choicesContainer.innerHTML = '';
-    sceneTitle.textContent = "Game Over";
+    sceneTitle.textContent = "نهاية اللعبة";
     storyText.textContent = message;
 
     let restartBtn = document.createElement("button");
     restartBtn.className = "choice-btn";
-    restartBtn.textContent = "Restart Game";
+    restartBtn.textContent = "إعادة اللعب";
     restartBtn.onclick = () => location.reload();
     choicesContainer.appendChild(restartBtn);
 }
